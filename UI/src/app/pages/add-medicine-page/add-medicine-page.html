@@ -1,0 +1,108 @@
+<section class="page-content">
+  <div class="page-heading">
+    <div>
+      <p class="eyebrow">Medicine inventory</p>
+      <h1>Add medicine</h1>
+      <p class="page-subtitle">Create a new inventory record</p>
+    </div>
+
+    <a class="back-link" routerLink="/">
+      <span aria-hidden="true">&#8592;</span>
+      Back to medicines
+    </a>
+  </div>
+
+  <div class="form-layout">
+    <form class="medicine-form" [formGroup]="medicineForm" (ngSubmit)="submitMedicine()" novalidate>
+      <div class="form-header">
+        <div>
+          <p class="form-kicker">New record</p>
+          <h2>Medicine details</h2>
+        </div>
+        <span class="required-note">* Required</span>
+      </div>
+
+      <div class="field">
+        <label for="name">Medicine name <span aria-hidden="true">*</span></label>
+        <input id="name" type="text" formControlName="name" />
+        @if (medicineForm.controls.name.touched && medicineForm.controls.name.hasError('required')) {
+          <small class="error">Medicine name is required.</small>
+        } @else if (medicineForm.controls.name.touched && medicineForm.controls.name.hasError('blank')) {
+          <small class="error">Medicine name cannot be blank.</small>
+        } @else if (medicineForm.controls.name.touched && medicineForm.controls.name.hasError('minlength')) {
+          <small class="error">Name must be at least 2 characters.</small>
+        } @else if (medicineForm.controls.name.touched && medicineForm.controls.name.hasError('maxlength')) {
+          <small class="error">Name cannot exceed 200 characters.</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="brand">Brand <span aria-hidden="true">*</span></label>
+        <input id="brand" type="text" formControlName="brand" />
+        @if (medicineForm.controls.brand.touched && medicineForm.controls.brand.hasError('required')) {
+          <small class="error">Brand is required.</small>
+        } @else if (medicineForm.controls.brand.touched && medicineForm.controls.brand.hasError('blank')) {
+          <small class="error">Brand cannot be blank.</small>
+        } @else if (medicineForm.controls.brand.touched && medicineForm.controls.brand.hasError('minlength')) {
+          <small class="error">Brand must be at least 2 characters.</small>
+        } @else if (medicineForm.controls.brand.touched && medicineForm.controls.brand.hasError('maxlength')) {
+          <small class="error">Brand cannot exceed 200 characters.</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="expiryDate">Expiry date <span aria-hidden="true">*</span></label>
+        <input id="expiryDate" type="date" [min]="today" formControlName="expiryDate" />
+        @if (medicineForm.controls.expiryDate.touched && medicineForm.controls.expiryDate.hasError('required')) {
+          <small class="error">Expiry date is required.</small>
+        } @else if (medicineForm.controls.expiryDate.touched && medicineForm.controls.expiryDate.hasError('futureDate')) {
+          <small class="error">Expiry date must be in the future.</small>
+        }
+      </div>
+
+      <div class="two-column">
+        <div class="field">
+          <label for="quantity">Quantity <span aria-hidden="true">*</span></label>
+          <input id="quantity" type="number" min="0" step="1" formControlName="quantity" />
+          @if (medicineForm.controls.quantity.touched && medicineForm.controls.quantity.hasError('required')) {
+            <small class="error">Quantity is required.</small>
+          } @else if (medicineForm.controls.quantity.touched && medicineForm.controls.quantity.hasError('min')) {
+            <small class="error">Quantity must be 0 or more.</small>
+          } @else if (medicineForm.controls.quantity.touched && medicineForm.controls.quantity.hasError('wholeNumber')) {
+            <small class="error">Quantity must be a whole number.</small>
+          }
+        </div>
+
+        <div class="field">
+          <label for="price">Price <span aria-hidden="true">*</span></label>
+          <input id="price" type="number" min="0.01" step="0.01" formControlName="price" />
+          @if (medicineForm.controls.price.touched && medicineForm.controls.price.hasError('required')) {
+            <small class="error">Price is required.</small>
+          } @else if (medicineForm.controls.price.touched && medicineForm.controls.price.hasError('min')) {
+            <small class="error">Price must be greater than 0.</small>
+          }
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="notes">Notes</label>
+        <textarea id="notes" formControlName="notes" maxlength="1000" rows="3"></textarea>
+        <small class="field-hint">{{ notesLength }}/1000 characters</small>
+        @if (medicineForm.controls.notes.touched && medicineForm.controls.notes.hasError('maxlength')) {
+          <small class="error">Notes cannot exceed 1000 characters.</small>
+        }
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" [disabled]="isSubmitting">{{ isSubmitting ? 'Saving...' : 'Add medicine' }}</button>
+      </div>
+
+      @if (submitError) {
+        <div class="message error-message">{{ submitError }}</div>
+      }
+      @if (submitSuccess) {
+        <div class="message success-message">{{ submitSuccess }}</div>
+      }
+    </form>
+  </div>
+</section>

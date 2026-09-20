@@ -1,0 +1,59 @@
+<section class="page-content">
+  <div class="page-heading">
+    <div>
+      <p class="eyebrow">Pharmacy Dashboard</p>
+      <h1>Medicines</h1>
+    </div>
+
+    <div class="search-box">
+      <label for="search">Search by name</label>
+      <input id="search" type="text" [(ngModel)]="searchTerm" (input)="searchMedicines()" placeholder="Search medicine name" />
+    </div>
+  </div>
+
+  <section class="medicine-table-wrap">
+    <div class="legend">
+      <span><i class="legend-dot red"></i> Expiring soon</span>
+      <span><i class="legend-dot yellow"></i> Low stock</span>
+    </div>
+
+    <div class="medicine-grid" role="table" aria-label="Medicine list">
+      <div class="grid-header" role="row">
+        <span role="columnheader">Name</span>
+        <span role="columnheader">Brand</span>
+        <span role="columnheader">Expiry</span>
+        <span role="columnheader">Qty</span>
+        <span role="columnheader">Price</span>
+      </div>
+
+      @for (medicine of medicines(); track $index) {
+        <div class="grid-row" role="row" [ngClass]="getRowClass(medicine)">
+          <span role="cell">{{ medicine.name }}</span>
+          <span role="cell">{{ medicine.brand }}</span>
+          <span role="cell">{{ medicine.expiryDate | date: 'dd MMM yyyy' }}</span>
+          <span role="cell">{{ medicine.quantity }}</span>
+          <span role="cell">{{ medicine.price | currency: 'INR' }}</span>
+        </div>
+      }
+
+      @if (loadError()) {
+        <div class="message error-message">{{ loadError() }}</div>
+      }
+
+      @if (!loadError() && medicines().length === 0) {
+        <div class="empty-state">No medicines found.</div>
+      }
+    </div>
+
+    @if (!loadError() && medicines().length > 0) {
+      <div class="pagination" aria-label="Medicine list pagination">
+        <span class="pagination-summary">{{ totalCount }} medicines</span>
+        <div class="pagination-actions">
+          <button type="button" (click)="goToPreviousPage()" [disabled]="pageNumber === 1">Previous</button>
+          <span>Page {{ pageNumber }} of {{ totalPages }}</span>
+          <button type="button" (click)="goToNextPage()" [disabled]="pageNumber === totalPages">Next</button>
+        </div>
+      </div>
+    }
+  </section>
+</section>

@@ -1,0 +1,39 @@
+### Health check
+GET http://localhost:5010/health
+Accept: application/json
+
+### Get all medicines
+GET http://localhost:5010/api/medicine
+Accept: application/json
+
+### Search medicine by name
+GET http://localhost:5010/api/medicine/search?query=paracetamol
+Accept: application/json
+
+### Add medicine
+POST http://localhost:5010/api/medicine
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Ibuprofen 200mg",
+  "notes": "Pain and inflammation relief",
+  "expiryDate": "2029-12-31",
+  "quantity": 50,
+  "price": 18.99,
+  "brand": "PharmaCare"
+}
+
+### Invalid medicine payload (validation example)
+POST http://localhost:5003/api/medicine
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "",
+  "notes": "Invalid medicine",
+  "expiryDate": "2020-01-01",
+  "quantity": -1,
+  "price": 0,
+  "brand": ""
+}

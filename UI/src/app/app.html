@@ -1,0 +1,13 @@
+<main class="page-shell">
+  <section class="panel">
+    <nav class="menu" aria-label="Main navigation">
+      <a class="brand" routerLink="/">Pharmacy</a>
+      <div class="menu-links">
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Medicines</a>
+        <a routerLink="/add" routerLinkActive="active">Add medicine</a>
+      </div>
+    </nav>
+
+    <router-outlet></router-outlet>
+  </section>
+</main>

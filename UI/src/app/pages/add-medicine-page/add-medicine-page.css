@@ -1,0 +1,31 @@
+.page-content { padding: 36px 48px 52px; }
+.page-heading { display: flex; justify-content: space-between; align-items: end; gap: 20px; margin-bottom: 32px; }
+.eyebrow { margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.12em; font-size: 12px; font-weight: 700; color: #167d8d; }
+h1 { margin: 0; color: #14213d; font-size: 2.35rem; letter-spacing: -0.03em; }
+.page-subtitle { margin: 8px 0 0; color: #667085; }
+.back-link { display: inline-flex; align-items: center; gap: 8px; color: #2563eb; font-weight: 700; text-decoration: none; }
+.back-link span { font-size: 1.2rem; line-height: 1; }
+.back-link:hover { color: #1747a6; }
+.form-layout { width: 100%; max-width: 720px; margin: 0 auto; }
+.medicine-form { box-sizing: border-box; background: #fff; border: 1px solid #dfe6ee; border-radius: 16px; padding: 30px; box-shadow: 0 16px 36px rgba(20, 33, 61, 0.08); }
+.form-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding-bottom: 22px; margin-bottom: 24px; border-bottom: 1px solid #e7edf3; }
+.form-kicker { margin: 0 0 6px; color: #167d8d; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
+.medicine-form h2 { margin: 0; color: #14213d; font-size: 1.45rem; letter-spacing: -0.02em; }
+.required-note { color: #667085; font-size: 0.78rem; white-space: nowrap; }
+.field { min-width: 0; margin-bottom: 20px; }
+.field label { display: block; color: #344054; font-size: 0.9rem; font-weight: 700; }
+.field label span { color: #d92d20; }
+.field input, .field textarea { box-sizing: border-box; display: block; border: 1px solid #cfd8e3; border-radius: 9px; padding: 12px 13px; width: 100%; margin-top: 8px; background: #fbfcfe; color: #14213d; font: inherit; transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease; }
+.field input:hover, .field textarea:hover { border-color: #98a9bc; }
+.field input:focus, .field textarea:focus { outline: none; border-color: #167d8d; background: #fff; box-shadow: 0 0 0 3px rgba(22, 125, 141, 0.14); }
+.field textarea { min-height: 106px; resize: vertical; }
+.two-column { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; min-width: 0; }
+.form-actions { display: flex; justify-content: flex-end; margin-top: 28px; padding-top: 22px; border-top: 1px solid #e7edf3; }
+button { border: 0; border-radius: 9px; padding: 12px 20px; background: #167d8d; color: #fff; font: inherit; font-weight: 800; cursor: pointer; }
+button:disabled { opacity: 0.65; cursor: not-allowed; }
+.error { display: block; margin-top: 6px; color: #d92d20; font-size: 0.8rem; }
+.field-hint { display: block; margin-top: 6px; color: #667085; font-size: 0.78rem; text-align: right; }
+.message { margin-top: 16px; padding: 12px 14px; border-radius: 9px; font-size: 0.9rem; }
+.error-message { background: #fef3f2; color: #b42318; }
+.success-message { background: #ecfdf5; color: #027a48; }
+@media (max-width: 560px) { .page-content { padding: 28px 20px 36px; } .page-heading { align-items: flex-start; flex-direction: column; } .medicine-form { padding: 22px; } .two-column { grid-template-columns: 1fr; gap: 0; } .form-actions { justify-content: stretch; } button { width: 100%; } }

@@ -1,0 +1,66 @@
+[
+  {
+    "Name": "Paracetamol 500mg",
+    "Notes": "Used for pain relief and fever",
+    "ExpiryDate": "2028-12-31",
+    "Quantity": 120,
+    "Price": 25.50,
+    "Brand": "Generic"
+  },
+  {
+    "Name": "Amoxicillin 250mg",
+    "Notes": "Prescription antibiotic",
+    "ExpiryDate": "2027-06-30",
+    "Quantity": 80,
+    "Price": 140.00,
+    "Brand": "MediCare"
+  },
+  {
+    "Name": "Vitamin C 1000mg",
+    "Notes": "Immune support supplement",
+    "ExpiryDate": "2029-03-15",
+    "Quantity": 200,
+    "Price": 65.75,
+    "Brand": "HealthPlus"
+  },
+  {
+    "Name": "Ibuprofen 200mg",
+    "Notes": "Pain and inflammation relief",
+    "ExpiryDate": "2022-12-31",
+    "Quantity": 50,
+    "Price": 18.99,
+    "Brand": "PharmaCare"
+  },
+  {
+    "Name": "Ibuprofen 200mg",
+    "Notes": "Pain and inflammation relief",
+    "ExpiryDate": "2029-12-31",
+    "Quantity": 9,
+    "Price": 18.99,
+    "Brand": "PharmaCare"
+  },
+  {
+    "Name": "Ibuprofen 200mg",
+    "Notes": "Pain and inflammation relief",
+    "ExpiryDate": "2026-09-30",
+    "Quantity": 66,
+    "Price": 18.99,
+    "Brand": "PharmaCare"
+  },
+  {
+    "Name": "Paracetamol",
+    "Notes": "Test",
+    "ExpiryDate": "2026-09-24",
+    "Quantity": 4,
+    "Price": 55,
+    "Brand": "Sun Pharma"
+  },
+  {
+    "Name": "Cetrizin",
+    "Notes": "Test",
+    "ExpiryDate": "2026-09-24",
+    "Quantity": 4,
+    "Price": 66,
+    "Brand": "Sun Pharma"
+  }
+]
