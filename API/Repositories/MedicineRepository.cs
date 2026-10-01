@@ -8,7 +8,7 @@ public class MedicineRepository : IMedicineRepository
     private const int CacheDurationInSeconds = 10;
 
     private readonly string _filePath;
-    private readonly object _syncRoot = new();
+    private readonly ReaderWriterLockSlim _lock = new();
     private readonly JsonSerializerOptions _jsonOptions = new()
     {
         WriteIndented = true
@@ -23,13 +23,13 @@ public class MedicineRepository : IMedicineRepository
         Directory.CreateDirectory(databaseDirectory);
 
         _filePath = Path.Combine(databaseDirectory, "medicines.json");
-        EnsureSeedData();
-        _cache = LoadFromFile();
+         EnsureSeedDataAsync().ConfigureAwait(true);
+        _cache =  LoadFromFileAsync().ConfigureAwait(true).GetAwaiter().GetResult();
     }
 
-    public PagedResult<Medicine> GetAll(string? query, int pageNumber, int pageSize)
+    public async Task<PagedResult<Medicine>> GetAllAsync(string? query, int pageNumber, int pageSize)
     {
-        var medicines = GetMedicines(query);
+        var medicines = await GetMedicinesAsync(query);
         var totalCount = medicines.Count;
         var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
 
@@ -46,94 +46,142 @@ public class MedicineRepository : IMedicineRepository
         };
     }
 
-    private List<Medicine> GetMedicines(string? query)
+    private async Task<List<Medicine>> GetMedicinesAsync(string? query)
     {
         if (string.IsNullOrWhiteSpace(query))
         {
-            return LoadFromFile();
+            return await LoadFromFileWithoutLockAsync();
         }
 
         var normalizedQuery = query.Trim();
 
-        lock (_syncRoot)
+        _lock.EnterReadLock();
+        try
         {
             if (_searchCache.TryGetValue(normalizedQuery, out var cachedResult) && cachedResult.ExpiresAt > DateTimeOffset.UtcNow)
             {
                 return cachedResult.Results.ToList();
             }
+        }
+        finally
+        {
+            _lock.ExitReadLock();
+        }
 
-            var results = LoadFromFile()
-                .Where(medicine => medicine.Name.Contains(normalizedQuery, StringComparison.OrdinalIgnoreCase))
-                .ToList();
+        var results = await LoadFromFileWithoutLockAsync();
+        results = results.Where(medicine => medicine.Name.Contains(normalizedQuery, StringComparison.OrdinalIgnoreCase))
+            .ToList();
 
+        _lock.EnterWriteLock();
+        try
+        {
             _searchCache[normalizedQuery] = (results, DateTimeOffset.UtcNow.AddSeconds(CacheDurationInSeconds));
             return results;
         }
+        finally
+        {
+            _lock.ExitWriteLock();
+        }
     }
 
-    public IEnumerable<Medicine> Search(string query)
+    public async Task<IEnumerable<Medicine>> SearchAsync(string query)
     {
         if (string.IsNullOrWhiteSpace(query))
         {
-            return LoadFromFile();
+            return await LoadFromFileWithoutLockAsync();
         }
 
-        return GetMedicines(query);
+        return await GetMedicinesAsync(query);
     }
 
-    public Medicine Add(Medicine medicine)
+    public async Task<Medicine> AddAsync(Medicine medicine)
     {
         ArgumentNullException.ThrowIfNull(medicine);
 
-        lock (_syncRoot)
+        _lock.EnterWriteLock();
+        try
         {
-            var medicines = LoadFromFile();
+            var medicines = await LoadFromFileWithoutLockAsync();
             medicines.Add(medicine);
-            SaveAll(medicines);
             _searchCache.Clear();
+            await SaveAllAsync(medicines);
             return medicine;
+        }
+        finally
+        {
+            _lock.ExitWriteLock();
         }
     }
 
-    private List<Medicine> LoadFromFile()
+
+    private async Task<List<Medicine>> LoadFromFileAsync()
     {
-        lock (_syncRoot)
+        if (_lock.IsWriteLockHeld)
+        {
+            return await LoadFromFileWithoutLockAsync();
+        }
+
+        _lock.EnterUpgradeableReadLock();
+        try
         {
             if (_cache != null)
             {
-                return _cache;
+                return _cache.ToList();
             }
 
             if (!File.Exists(_filePath) || new FileInfo(_filePath).Length == 0)
             {
                 _cache = [];
-                return _cache;
+                return [];
             }
 
-            var json = File.ReadAllText(_filePath);
-            if (string.IsNullOrWhiteSpace(json))
+            var medicines = await LoadFromFileWithoutLockAsync();
+
+            _lock.EnterWriteLock();
+            try
             {
-                _cache = [];
-                return _cache;
+                _cache ??= medicines;
+                return _cache.ToList();
             }
-
-            var medicines = JsonSerializer.Deserialize<List<Medicine>>(json);
-            _cache = medicines ?? [];
-            return _cache;
+            finally
+            {
+                _lock.ExitWriteLock();
+            }
         }
-    }
-
-    private void SaveAll(List<Medicine> medicines)
-    {
-        lock (_syncRoot)
+        finally
         {
-            var json = JsonSerializer.Serialize(medicines, _jsonOptions);
-            File.WriteAllText(_filePath, json);
-            _cache = medicines;
+            _lock.ExitUpgradeableReadLock();
         }
     }
 
-    private void EnsureSeedData()
+    private async Task<List<Medicine>> LoadFromFileWithoutLockAsync()
+    {
+        if (_cache != null)
+        {
+            return _cache.ToList();
+        }
+
+        if (!File.Exists(_filePath) || new FileInfo(_filePath).Length == 0)
+        {
+            _cache = [];
+            return [];
+        }
+
+        var json = await File.ReadAllTextAsync(_filePath);
+        _cache = string.IsNullOrWhiteSpace(json)
+            ? []
+            : JsonSerializer.Deserialize<List<Medicine>>(json) ?? [];
+        return _cache.ToList();
+    }
+
+    private async Task SaveAllAsync(List<Medicine> medicines)
+    {
+        var json = JsonSerializer.Serialize(medicines, _jsonOptions);
+        await File.WriteAllTextAsync(_filePath, json);
+        _cache = medicines;
+    }
+
+    private async Task EnsureSeedDataAsync()
     {
         if (File.Exists(_filePath) && new FileInfo(_filePath).Length > 0)
         {
@@ -171,6 +219,6 @@ public class MedicineRepository : IMedicineRepository
             }
         };
 
-        SaveAll(medicines);
+        await SaveAllAsync(medicines);
     }
 }

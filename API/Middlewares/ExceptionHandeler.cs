@@ -20,7 +20,7 @@ public class GlobalExceptionHandler : IExceptionHandler
     public async ValueTask<bool> TryHandleAsync(
         HttpContext httpContext,
         Exception exception,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken)    
     {
         // 1. Log the full error to your server monitoring system safely
         _logger.LogError(exception, "An unhandled exception occurred: {Message}", exception.Message);

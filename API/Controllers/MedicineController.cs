@@ -17,7 +17,7 @@ public class MedicineController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<MedicineListResponse> GetAll(
+    public async Task<ActionResult<MedicineListResponse>> GetAllAsync(
         [FromQuery] string? query = null,
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10)
@@ -27,7 +27,7 @@ public class MedicineController : ControllerBase
             return BadRequest("pageNumber must be at least 1 and pageSize must be between 1 and 100.");
         }
 
-        var medicines = _medicineRepository.GetAll(query, pageNumber, pageSize);
+        var medicines = await _medicineRepository.GetAllAsync(query, pageNumber, pageSize);
 
         return Ok(new MedicineListResponse
         {
@@ -40,14 +40,14 @@ public class MedicineController : ControllerBase
     }
 
     [HttpGet("search")]
-    public ActionResult<IEnumerable<MedicineResponse>> Search([FromQuery] string query)
+    public async Task<ActionResult<IEnumerable<MedicineResponse>>> SearchAsync([FromQuery] string query)
     {
-        var medicines = _medicineRepository.Search(query).Select(ToResponse);
+        var medicines = (await _medicineRepository.SearchAsync(query)).Select(ToResponse);
         return Ok(medicines);
     }
 
-    [HttpPost]
-    public ActionResult<MedicineResponse> AddMedicine([FromBody] CreateMedicineRequest request)
+    [HttpPost("add")]
+    public async Task<ActionResult<MedicineResponse>> AddMedicineAsync([FromBody] CreateMedicineRequest request)
     {
         if (request.ExpiryDate <= DateOnly.FromDateTime(DateTime.Today))
         {
@@ -65,7 +65,7 @@ public class MedicineController : ControllerBase
             Brand = request.Brand
         };
 
-        var createdMedicine = _medicineRepository.Add(medicine);
+        var createdMedicine = await _medicineRepository.AddAsync(medicine);
         return StatusCode(StatusCodes.Status201Created, ToResponse(createdMedicine));
     }
 

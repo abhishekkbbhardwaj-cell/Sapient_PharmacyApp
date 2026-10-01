@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.Extensions;
 using PharmacyApp.Api.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,7 +7,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngularApp", policy =>
     {
-        policy.WithOrigins("http://localhost:4200")
+        policy.WithOrigins("http://localhost:4200", "https://localhost:4200")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -22,6 +23,7 @@ builder.Services.AddScoped<IMedicineRepository, MedicineRepository>();
 
 var app = builder.Build();
 app.UseCors("AllowAngularApp");
+app.UseHttpsRedirection();
 
 app.UseExceptionHandler("/error");
 app.MapControllers();

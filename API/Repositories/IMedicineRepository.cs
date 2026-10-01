@@ -4,7 +4,7 @@ namespace PharmacyApp.Api.Repositories;
 
 public interface IMedicineRepository
 {
-    PagedResult<Medicine> GetAll(string? query, int pageNumber, int pageSize);
-    IEnumerable<Medicine> Search(string query);
-    Medicine Add(Medicine medicine);
+    Task<PagedResult<Medicine>> GetAllAsync(string? query, int pageNumber, int pageSize);
+    Task<IEnumerable<Medicine>> SearchAsync(string query);
+    Task<Medicine> AddAsync(Medicine medicine);
 }
